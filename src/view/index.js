@@ -5,6 +5,7 @@
 
 import React,{Component} from 'react';
 import ReactDom,{render} from 'react-dom';
+import MainRouter from '../router/mainRouter'
 
 class App extends Component{
     constructor(props){
@@ -14,7 +15,7 @@ class App extends Component{
 
     render(){
         return (
-            <div>111</div>
+            <MainRouter/>
         );
     }
 }

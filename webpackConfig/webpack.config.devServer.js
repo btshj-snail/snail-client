@@ -6,6 +6,8 @@
 
 const devServer = function(env){
     return {
+        contentBase:"/",
+        publicPath:"/static",
         host:"0.0.0.0",
         inline:true,
         port: 8083,
