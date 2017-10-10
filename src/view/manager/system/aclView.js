@@ -8,7 +8,7 @@ import React from 'react';
 
 const AclView = ()=>{
     return (
-        <div>授权界面</div>
+        <div className="frame_content_inner">授权界面</div>
     )
 }
 

@@ -3,54 +3,72 @@
  */
 'use strict'
 require('../../publicResource/less/manager.less')
-import React,{Component} from 'react';
-import {Link} from 'react-router-dom';
+import React, {Component} from 'react';
 
-const FrameHeader =()=>{
+import snailUtils from '../../publicResource/libs/snailUtils';
+import ServerCtrl from '../../controller/serverController'
+
+import FrameContentRouter from '../../router/frameContentRouter';
+import FrameHeaderMenu from './frame/frameHeaderMenu';
+
+const FrameHeader = ({match}) => {
     return (
         <div className="frame_header">
-            <div className="logoArea"></div>
-            <ul className="menuArea">
-                <Link to="/admin/aclView"><li className="menuItem">授权</li></Link>
-                <Link to="/admin/userMgView"><li className="menuItem">用户</li></Link>
-                <Link to="/admin/roleMgView"><li className="menuItem">角色</li></Link>
-                <Link to="/admin/orgMgView"><li className="menuItem">组织机构</li></Link>
-            </ul>
+            <div className="logoArea">Snail Manager</div>
+            <FrameHeaderMenu match={match}/>
         </div>
     )
 }
 
-const FrameBottom =()=>{
+const FrameBottom = () => {
     return (
         <div className="frame_footer">
-          底部条
-        </div>
-    )
-}
-
-const FrameContent =({match})=>{
-    console.log(`FrameContent:${match.url}`)
-    let screenHeight = Math.max(document.body.clientHeight,document.documentElement.clientHeight);
-
-    return (
-        <div className="frame_content" style={{height:screenHeight-64-64}}>
-
+            底部条
         </div>
     )
 }
 
 
-const Frame = ({match})=>{
-    console.log(`Frame:${match.url}`)
-    return (
-        <div>
-            <FrameHeader/>
+export default class Frame extends Component {
 
-            <FrameContent match={match}/>
+    constructor(props) {
+        super(props);
+        this.state = {
+            hasAuth:true
+        };
 
-            <FrameBottom/>
-        </div>
-    )
+
+    }
+
+    componentDidMount() {
+        snailUtils.writeLog('进来了')
+        this.loadAuthInfo();
+    }
+
+    loadAuthInfo() {
+        ServerCtrl.loadLoginInfo()
+            .catch(ex=>{
+                snailUtils.writeLog("加载登录信息失败");
+            })
+            .then(data => {
+                this.setState({hasAuth:true});
+            })
+            .catch(ex => {
+                this.setState({hasAuth:false});
+            })
+    }
+
+
+    render() {
+        return (
+            <div>
+                <FrameHeader match={match}/>
+
+                <FrameContentRouter match={match}/>
+
+                <FrameBottom/>
+            </div>
+        )
+
+    }
 }
-
-export default Frame;
