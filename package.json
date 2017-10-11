@@ -13,7 +13,6 @@
   "dependencies": {
     "antd": "^2.13.3",
     "babel-preset-latest": "^6.24.1",
-    "babel-preset-react": "^6.24.1",
     "es6-promise": "^4.1.1",
     "fetch-detector": "^1.0.1",
     "fetch-ie8": "^1.5.0",
