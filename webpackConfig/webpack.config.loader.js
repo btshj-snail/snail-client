@@ -51,7 +51,7 @@ const loader = function (env) {
                         loader: 'babel-loader',
                         options: {
                             presets: [
-                                ['babel-preset-es2015',{modules:false}],'react','latest'
+                                ['babel-preset-es2015',{modules:false}],'react','stage-2'
                                 // ['babel-preset-es2015',{modules:false}],'babel-preset-stage-2','react'
                                 // ['react'],
                                 // 编译es2015版本的js

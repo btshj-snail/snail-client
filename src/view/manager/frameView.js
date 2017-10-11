@@ -60,6 +60,7 @@ export default class Frame extends Component {
 
 
     render() {
+        let {match} = this.props;
         return (
             <div>
                 <FrameHeader match={match}/>
