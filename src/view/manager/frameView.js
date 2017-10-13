@@ -33,30 +33,12 @@ export default class Frame extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            hasAuth:true
-        };
+        this.state = {};
 
 
     }
 
-    componentDidMount() {
-        snailUtils.writeLog('进来了')
-        this.loadAuthInfo();
-    }
-
-    loadAuthInfo() {
-        ServerCtrl.loadLoginInfo()
-            .catch(ex=>{
-                snailUtils.writeLog("加载登录信息失败");
-            })
-            .then(data => {
-                this.setState({hasAuth:true});
-            })
-            .catch(ex => {
-                this.setState({hasAuth:false});
-            })
-    }
+    componentDidMount() {}
 
 
     render() {

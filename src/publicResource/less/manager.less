@@ -16,43 +16,118 @@ div,p,ul,ol{
   overflow: hidden;
 }
 
-.frame_header{
-  height:64px;
-  line-height:64px;
-  background-color:#684406;
-  border-bottom:solid 1px transparent;
-  padding:0px 20px;
+.cle {
+  *zoom: 1;
 }
-.frame_header .logoArea{
+
+.cle::after {
+  visibility: hidden;
+  font-size: 0px;
+  content: "\20";
+  clear: both;
+  display: block;
+  height: 0px;
+}
+
+.button{
+  line-height:30px;
+  height:30px;
+  width:100px;
   color:#fff;
+  font-size:14px;
+  border-radius:10px;
+  box-shadow:0px 4px 3px 0px rgba(0,0,0,0.1);
+  text-align: center;
+  cursor:pointer;
+}
+
+.page {
+  position:relative;
+  height: 100%;
+  height:100vh;
+  width:100%;
+  width:100vw;
+
+  overflow:hidden;
+}
+.loginHalfPart{
+  height:50%;
+  height:50vh;
+
+}
+
+.loginHalfPart_top{
+  background:#2d9bce;
+  border-bottom:solid 1px #fff;
+}
+.loginHalfPart_bottom{
+  background:#d8f0fc;
+  border-top:solid 1px #fff;
+}
+
+.loginFrame{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform: translateY(-50%) translateX(-50%);
+  width:500px;
+  min-height:200px;
+  background:#fff;
+  border-radius:30px;
+  box-shadow:-24px 30px 30px 0 rgba(0, 0, 0, 0.1);
+  padding:30px;
+}
+
+.loginFrame .logoArea{
+  height:64px;
   font-size:24px;
-  width:150px;
-  float:left;
+  text-align:center;
+  color:#2f839e;
 }
-.frame_header .menuArea{
-  margin-left:150px;
+
+.loginFrame .loginArea {
+  width: 280px;
+  margin:20px auto;
 }
-.frame_header .menuArea .menuItem{
+
+.loginFrame .loginArea .infoItem{
+  margin:20px auto;
+  width:100%;
+}
+
+.loginFrame .loginArea .infoItem>span{
   display: inline-block;
-  color:#fff;
-  margin:0px 20px;
-
+  width:80px;
+  height:30px;
+  line-height:30px;
+  font-size:16px;
+  color:#999;
+  text-align: left;
+}
+.loginFrame .loginArea .infoItem>input{
+  display: inline-block;
+  width:180px;
+  height:30px;
+  border:solid 1px #ccc;
+  padding-left:10px;
 }
 
-.frame_footer{
-  height:64px;
-  background-color:#2f684e;
-  color:#fff;
-}
-
-.frame_content{
-
+.loginFrame .loginArea .infoItem .button{
   width:100%;
-  background-color:#fff;
+  height:40px;
+  border-radius:10px;
+  box-shadow: 0 3px 5px 0 rgba(0,0,0,0.07);
+  line-height:40px;
+  text-align: center;
+  color:#fff;
+  background:#f5a623;
+  cursor:pointer;
 }
 
-.frame_content .frame_content_inner{
-  width:100%;
-  height:100%;
+.loginFrame .loginArea .infoItem .button:hover{
+  opacity:0.8;
 }
+
+
+
 

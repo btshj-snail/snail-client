@@ -54,9 +54,6 @@ export default class LoginRoute extends React.Component {
             return (<div>正在加载中</div>)
         }
 
-        for(let o in this.props){
-            console.log(`${o}:${this.props[o]}`)
-        }
         return (
             <Route {...rest} render={props => (
                 status == STATUS_PASS ? (
@@ -66,85 +63,5 @@ export default class LoginRoute extends React.Component {
                 )
             )}/>
         )
-
-
-        // if (status == STATUS_PASS) {
-        //     return (
-        //             <Route {...this.props} render={props =>{
-        //                 return (<component {...props}/>)
-        //             } }/>
-        //     )
-        // } else if (status == STATUS_NO_PASS) {
-        //     return (<Redirect to={{pathname: '/adminLogin', state: {from: location}}}/>)
-        // }
     }
 }
-// const LoginRoute = ({component:Component,...rest})=>(
-     // class extends Component{
-     //    constructor(props) {
-     //        super(props);
-     //        this.state = {
-     //            status: STATUS_ING
-     //        }
-     //    }
-     //
-     //    componentDidMount() {
-     //        this.loadLoginInfo();
-     //    }
-
-        // loadLoginInfo() {
-        //     ServerCtrl.loadLoginInfo()
-        //         .catch(ex => {
-        //             this.setState({status: STATUS_NO_PASS});
-        //             snailUtils.writeLog(ex)
-        //         })
-        //         .then(data => {
-        //             snailUtils.writeLog(data.userName)
-        //             if (!!data.userName) {
-        //                 this.setState({status: STATUS_PASS});
-        //             } else {
-        //                 this.setState({status: STATUS_NO_PASS});
-        //             }
-        //         })
-        //
-        // }
-
-
-        // render() {
-        //     let {location} = this.props;
-        //
-        //     let {status} = this.state;
-        //
-        //     if(status==STATUS_ING){
-        //         return (<div>正在加载中</div>)
-        //     }
-        //
-        //     return (
-        //         <Route {...rest} render={props=>{
-        //             status==STATUS_PASS?(
-        //                 <Component {...props} />
-        //             ):(
-        //                 <Redirect to={{pathname: '/adminLogin', state: {from: location}}}/>
-        //             )
-        //         }}/>
-        //     )
-
-
-            // if (status == STATUS_PASS) {
-            //     return (
-            //             <Route {...this.props} render={props =>{
-            //                 return (<component {...props}/>)
-            //             } }/>
-            //     )
-            // } else if (status == STATUS_NO_PASS) {
-            //     return (<Redirect to={{pathname: '/adminLogin', state: {from: location}}}/>)
-            // }
-
-//         }
-//     }
-// )
-
-
-// export default  LoginRoute;
-
-

@@ -3,9 +3,21 @@
  */
 'use strict'
 
+let {join,resolve} = require('path');
+let fs = require('fs');
+
 const webpack = require('webpack'),
     autoprefixer = require('autoprefixer'),
     ExtractTextPlugin = require('extract-text-webpack-plugin');
+
+const lessToJs = require('less-vars-to-js');
+const packageJsonPath = join(process.cwd(),"./package.json");
+const packageJson = require(packageJsonPath);
+
+
+const themeVariables = lessToJs(fs.readFileSync(join(process.cwd(),packageJson.theme),'utf8'));
+
+
 
 function getLessUse(env) {
     return env != 'dev'
@@ -23,11 +35,12 @@ function getLessUse(env) {
                     modules: false
                 }
             },
-            {loader: 'postcss-loader',options:{plugins:[autoprefixer({browsers:['ie>=8','>1% in CN']})]}},
+            // {loader: 'postcss-loader',options:{plugins:[autoprefixer({browsers:['ie>=8','>1% in CN']})]}},
             {
                 loader: 'less-loader',
                 options: {
                     modules: false,
+                    modifyVars:themeVariables
                 }
             }]
 
@@ -52,17 +65,13 @@ const loader = function (env) {
                         options: {
                             presets: [
                                 ['babel-preset-es2015',{modules:false}],'react','stage-2'
-                                // ['babel-preset-es2015',{modules:false}],'babel-preset-stage-2','react'
-                                // ['react'],
-                                // 编译es2015版本的js
-                                // ['es2015', {
-                                //     modules: false
-                                // }], ['babel-preset-stage-2']
+
                             ],
 
                             plugins: [
                                 // 减少重复的编译后的辅助方法
                                 'babel-plugin-transform-runtime',
+                                ["import",{libraryName:"antd",style:true}]
                             ]
                         }
                     }

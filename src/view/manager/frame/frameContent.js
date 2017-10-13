@@ -13,7 +13,7 @@ export default class FrameContent extends Component{
 
     render(){
         return (
-            <div className="frame_content_inner">
+            <div>
                 this is default page
             </div>
         )

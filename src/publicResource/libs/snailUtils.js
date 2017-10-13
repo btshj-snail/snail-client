@@ -14,8 +14,6 @@ const snailUtils = {
     },
     fetch(url,{param,method="POST"}={}){
 
-
-
         let headers = new Headers();
         headers.append('Accept', 'application/json');
         headers.append('Content-Type', 'application/json');
@@ -29,6 +27,7 @@ const snailUtils = {
 
         configJson.body = JSON.stringify(param);
 
+        snailUtils.writeLog(`请求[url:${url},param:${JSON.stringify(param)}]`)
 
         return fetch(url,configJson)
             .then(response => {

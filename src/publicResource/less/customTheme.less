@@ -1,0 +1,12 @@
+/**
+在antd基础上进行自定义的主题
+在webpack.config.loader.js中,利用nodejs 获取了package.json中theme的字段,该字段则是将要启用的自定义主题的路径
+这样在webpack.config.loader.js中,利用less-vars-to-js,将less中的变量转换成js对象,然后在less-loader中,利用modifyVars
+将antd预定的less变量值替换成自定义的.从而实现自定义主题.
+
+
+现在唯一的问题是,改变了主题,必须重新编译一次.
+以后再改成热部署的形式.
+ */
+
+@font-size-base:14px;
