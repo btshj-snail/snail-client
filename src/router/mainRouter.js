@@ -11,7 +11,7 @@ import LoginRoute from '../publicResource/components/loginRoute';
 
 import HomeView from '../view/homeView';
 import WebsiteHomeView from '../view/website/websiteHomeView';
-import AdminFrame from '../view/manager/frameViewAnt';
+import AdminFrame from '../view/manager/frameView';
 import AdminLogin from '../view/manager/login/loginView'
 
 import Page404View from '../view/manager/system/page404View';
