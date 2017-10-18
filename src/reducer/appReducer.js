@@ -4,8 +4,8 @@
 'use strict'
 
 import {combineReducers,createStore} from 'redux';
-import frameReducers from './frame/frameReducers';
-import businessReducers from './business/businessReducers';
+import frameReducers from './frameReducers';
+import businessReducers from './businessReducers';
 
 const appReducer = combineReducers({
     frame:frameReducers,
@@ -13,4 +13,4 @@ const appReducer = combineReducers({
 })
 
 
-let stroe = createStore(appReducer);
+export default appReducer;

@@ -4,9 +4,10 @@
 
 'use strict'
 
-const GET_ALL_MENU_INFO = "getAllMenuInfo";
-const GET_CHILDREN_AND_GRANDSON_MENU = "getChildrenAndGrandsonMenu";
-const GET_CHILDREN_MENU = "getChildrenMenu";
+export const GET_ALL_MENU_INFO = "getAllMenuInfo";
+export const GET_CHILDREN_AND_GRANDSON_MENU = "getChildrenAndGrandsonMenu";
+export const GET_CHILDREN_MENU = "getChildrenMenu";
+export const GET_NO_PARENT_MENU = "getNoParentMenu";
 
 /**
  * 获取所有菜单信息
@@ -39,5 +40,15 @@ export function getChildrenMenu(parentId){
     return {
         type:GET_CHILDREN_MENU,
         parentId
+    }
+}
+
+/**
+ * 获取顶层节点
+ * @returns {{type: string}}
+ */
+export function getAllNoParentMenu(){
+    return {
+        type:GET_NO_PARENT_MENU
     }
 }

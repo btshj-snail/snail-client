@@ -5,19 +5,26 @@
 
 import React,{Component} from 'react';
 import ReactDom,{render} from 'react-dom';
-import MainRouter from '../router/mainRouter'
+import {Provider} from 'react-redux';
+import {createStore,applyMiddleware} from 'redux';
+import thunkMiddleware from 'redux-thunk';
+import {createLogger} from 'redux-logger';
+import MainRouter from '../router/mainRouter';
+import appReducer from '../reducer/appReducer';
 
-class App extends Component{
-    constructor(props){
-        super(props);
-        this.state = {}
-    }
 
-    render(){
-        return (
+
+let loggerMiddleware = createLogger();
+
+let store = createStore(appReducer,applyMiddleware(thunkMiddleware,loggerMiddleware));
+
+function App(){
+    return (
+        <Provider store={store}>
             <MainRouter/>
-        );
-    }
+        </Provider>
+    )
 }
 
-render(<App/>,document.getElementById("app"))
+
+render(<App/>,document.getElementById("root"))

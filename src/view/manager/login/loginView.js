@@ -4,10 +4,10 @@
 'use strict'
 
 
-import React, {Component} from 'react'
+import React, {Component,PropTypes} from 'react'
 import {Redirect} from 'react-router-dom';
-import {Form, Icon, Input, Button} from 'antd';
-import ServerCtrl from '../../../controller/serverController';
+import {Form, Icon, Input, Button,Spin} from 'antd';
+import {loadingCtrl,setLoginStatus,loginIn,LoginStatus} from './loginAction';
 import snailUtils from '../../../publicResource/libs/snailUtils';
 import  '../../../publicResource/less/manager.less'
 
@@ -19,38 +19,29 @@ class LoginForm extends React.Component{
 
     constructor(props){
         super(props);
-        this.state={
-            loginFailed:"",
-        }
         this._onSubmit = this._onSubmit.bind(this);
         this._onInputChange = this._onInputChange.bind(this);
     }
 
     _onSubmit(e){
-        let {onSubmitSuccess} = this.props;
+        let {onLogin} = this.props;
         e.preventDefault();
         this.props.form.validateFields((err,value)=>{
             if(!err){
-                ServerCtrl.loginIn(value)
-                    .catch(ex=>{
-                        snailUtils.writeLog(ex.msg);
-                        this.setState({loginFailed:ex.msg});
-                    })
-                    .then(data=>{
-                        onSubmitSuccess && onSubmitSuccess();
-                    })
+               onLogin && onLogin(value);
             }
         })
     }
 
     _onInputChange(){
-        let {loginFailed} = this.state;
-        !!loginFailed && (this.setState({loginFailed:""}))
+        let {reLoginStatusToNo,loginError} = this.props;
+            loginError && reLoginStatusToNo && reLoginStatusToNo();
     }
 
     render(){
+
         let {getFieldDecorator} = this.props.form;
-        let {loginFailed} = this.state;
+        let {loginError} = this.props;
         return (
 
             <Form onSubmit={this._onSubmit} className="login_form">
@@ -73,12 +64,18 @@ class LoginForm extends React.Component{
                     )}
                 </FormItem>
 
-                <span>{loginFailed}</span>
+                <span>{loginError?"用户名或密码错误":""}</span>
 
                 <Button style={{width:"100%"}} type="primary" size="large" htmlType="submit" className="login-form-button">登录</Button>
             </Form>
         )
     }
+}
+
+LoginForm.propTypes = {
+    reLoginStatusToNo:PropTypes.func.isRequired,
+    onLogin:PropTypes.func.isRequired,
+    loginError:PropTypes.bool.isRequired
 }
 
 
@@ -88,25 +85,33 @@ const WrappedLoginForm = Form.create()(LoginForm);
 export default class LoginView extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            login: false,
-        }
+        this._onLogin = this._onLogin.bind(this);
+        this._reLoginStatusToNo = this._reLoginStatusToNo.bind(this);
     }
 
-    _onSubmitSuccess(){
-        this.setState({login:true});
+    _reLoginStatusToNo(){
+        let {dispatch} = this.props;
+        dispatch(setLoginStatus(LoginStatus.LOGIN_STATUS_NO));
+    }
+
+    _onLogin(value){
+        let {dispatch} = this.props;
+        dispatch(loginIn(value));
     }
 
     render() {
-        let {login} = this.state;
+        let {loading,loginStatus} = this.props;
+        alert(loginStatus)
         let {from} = this.props.location.state || {from: {pathname: "/admin"}};
 
-        if (!login) {
+        if (!loginStatus || loginStatus==LoginStatus.LOGIN_STATUS_NO || loginStatus==LoginStatus.LOGIN_STATUS_FAILED) {
 
             return (
 
                 <div className="page">
-
+                    {
+                        loading?<Spin size="large" spinning={true}/>:null
+                    }
                     <div className="loginHalfPart loginHalfPart_top"></div>
                     <div className="loginHalfPart loginHalfPart_bottom"></div>
 
@@ -116,7 +121,10 @@ export default class LoginView extends Component {
                         </div>
 
                         <div className="loginArea">
-                            <WrappedLoginForm onSubmitSuccess={this._onSubmitSuccess.bind(this)}/>
+                            <WrappedLoginForm
+                                onLogin={this._onLogin}
+                                reLoginStatusToNo = {this._reLoginStatusToNo}
+                                loginError={loginStatus==LoginStatus.LOGIN_STATUS_FAILED}/>
 
                         </div>
                     </div>
@@ -130,4 +138,13 @@ export default class LoginView extends Component {
 
 
     }
+}
+
+LoginView.propType = {
+    loginStatus:PropTypes.oneOf([
+        LoginStatus.LOGIN_STATUS_NO,
+        LoginStatus.LOGIN_STATUS_FAILED,
+        LoginStatus.LOGIN_STATUS_SUCCESS
+    ]),
+    loading:PropTypes.bool.isRequired,
 }

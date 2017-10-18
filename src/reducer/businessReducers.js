@@ -3,6 +3,7 @@
  */
 'use strict'
 
-export default function businessReducers (state,action){
+export default function businessReducers (state={},action){
+
     return state;
 }

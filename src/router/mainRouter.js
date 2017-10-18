@@ -39,3 +39,4 @@ export default class MainRouter extends Component {
         );
     }
 }
+//<LoginRoute path="/admin" component={AdminFrame}/>

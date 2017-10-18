@@ -4,12 +4,13 @@
 'use strict'
 
 import {combineReducers} from 'redux';
-import pageResReducer from './acl/pageResReducer';
-
+import frameReducer from '../view/manager/frameReducer';
+import loginReducer from '../view/manager/login/loginReducer';
 
 
 const frameReducers = combineReducers({
-    pageRes:pageResReducer,
+    frame:frameReducer,
+    login:loginReducer,
 });
 
 

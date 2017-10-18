@@ -30,6 +30,7 @@ export default class LoginRoute extends React.Component {
     loadLoginInfo() {
         ServerCtrl.loadLoginInfo()
             .catch(ex => {
+
                 this.setState({status: STATUS_NO_PASS});
                 snailUtils.writeLog(ex)
             })
