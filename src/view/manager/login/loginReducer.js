@@ -2,7 +2,7 @@
  * Created by snail on 17-10-18.
  */
 
-import {OPERATE_LOADING,SET_LOGIN_STATUS,LoginStatus} from './loginAction';
+import {OPERATE_LOADING_LOGIN,SET_LOGIN_STATUS,LoginStatus} from './loginAction';
 
 
 const initState = {
@@ -12,7 +12,7 @@ const initState = {
 
 const loginReducer = function (state=initState,action){
     switch(action.type){
-        case OPERATE_LOADING :
+        case OPERATE_LOADING_LOGIN :
             return Object.assign({},state,{loading:action.flag});break;
         case SET_LOGIN_STATUS:
             return Object.assign({},state,{loginStatus:action.status});break;

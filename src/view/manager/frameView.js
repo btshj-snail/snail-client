@@ -2,83 +2,179 @@
  * Created by snail on 17-9-29.
  */
 'use strict'
-import React, {Component} from 'react';
-import {Layout,Menu,Breadcrumb,Icon} from 'antd';
+import React, {Component, PropTypes} from 'react';
+import {Layout, Menu, Breadcrumb, Icon} from 'antd';
+import {connect} from 'react-redux';
+import {getMenusByCurrentUser,selectTopMenu} from './frameAction'
+
+
 const {SubMenu} = Menu;
-const{Header,Content,Sider,Footer} = Layout;
+const {Header, Content, Sider, Footer, Spin} = Layout;
 
 import snailUtils from '../../publicResource/libs/snailUtils';
 import ServerCtrl from '../../controller/serverController'
 
 import FrameContentRouter from '../../router/frameContentRouter';
 
-export default class Frame extends Component{
-    constructor(props){
+class Frame extends Component {
+    constructor(props) {
         super(props);
+        this._onClickTopMenu = this._onClickTopMenu.bind(this);
     }
 
-    render(){
+    componentDidMount() {
+        this.loadMenu();
+    }
+
+    loadMenu() {
+        let {dispatch} = this.props;
+        dispatch(getMenusByCurrentUser());
+    }
+
+    _assembleSideMenu(sideMenus, pId) {
+        let _ary = [];
+        sideMenus.forEach(item => {
+            let {parentId, id, isPage, icon, name} = item;
+            if (pId == parentId) {
+
+                if (isPage) {
+                    _ary.push(<Menu.Item key={id}>{!!icon ? <Icon type={icon}/> : null}{name}</Menu.Item>)
+                } else {
+                    let subAry = this._assembleSideMenu(sideMenus, id);
+                    if (subAry.length > 0) {
+                            _ary.push(
+                                <SubMenu key={id} title={<span>{!!icon ? <Icon type={icon}/> : null}{name}</span>}>
+                                    {subAry}
+
+                                </SubMenu>
+                            )
+                    }
+                }
+            }
+        })
+        return _ary;
+    }
+
+    _onClickTopMenu(e){
+        let {dispatch} = this.props;
+        dispatch(selectTopMenu(e.key));
+    }
+
+    renderTopMenu(){
+        let {topMenu} = this.props;
+        let topMenuItems = [];
+        if(Array.isArray(topMenu) && topMenu.length>0){
+            topMenuItems = topMenu.map(item=>{
+                let {id,name,icon}= item;
+                return <Menu.Item key={id}>{!!icon?<Icon type={icon}/>:null}{name}</Menu.Item>
+            })
+        }
+        return (
+            <Menu
+                theme="dark"
+                mode="horizontal"
+                onClick={this._onClickTopMenu}
+                // defaultSelectedKeys={["2"]}
+                // defaultOpenKeys={['sub1']}
+                style={{lineHeight: "64px", float: "right"}}
+            >
+                {topMenuItems}
+            </Menu>
+        )
+    }
+
+    renderSideMenu(){
+        let {sideMenu,selectedTopMenuId} = this.props;
+        let sideMenuItems = [];
+        if(Array.isArray(sideMenu) && sideMenu.length>0 && !!selectedTopMenuId){
+            sideMenuItems = this._assembleSideMenu(sideMenu,selectedTopMenuId);
+        }
+
+        return (
+            <Menu
+                mode="inline"
+                style={{width: '100%', height: "100%"}}
+            >
+                {sideMenuItems}
+
+            </Menu>
+        )
+    }
+
+    render() {
         let {match} = this.props;
-        let contentHeight = document.body.clientHeight-64-45-69;
+        let contentHeight = document.body.clientHeight - 64 - 45 - 69;
         return (
             <Layout>
                 <Header className="header">
-                    <div className="logo"></div>
-                    <Menu
-                        theme="dark"
-                        mode="horizontal"
-                        defaultSelectedKeys={["2"]}
-                        defaultOpenKeys={['sub1']}
-                        style={{lineHeight:"64px",float:"right"}}
-                    >
-                     <Menu.Item key="1">nav1</Menu.Item>
-                     <Menu.Item key="2">nav2</Menu.Item>
-                     <Menu.Item key="3">nav3</Menu.Item>
-                    </Menu>
+                    <div className="logo">
+                        <img className="logoImg" src={require("../../publicResource/imgs/frame/snail.png")} alt=""/>
+                        Manager System
+                    </div>
+                    {this.renderTopMenu()}
                 </Header>
 
 
                 <Layout>
-                    <Sider width={200} style={{background:"#fff"}}>
-                        <Menu
-                        mode="inline"
-                        defaultSelectedKeys={["1"]}
-                        defaultOpenKeys={['sub1']}
-                        style={{width:'100%',height:"100%"}}
-                        >
-                            <SubMenu key="sub1" title={<span><Icon type="user"/>subnav 1</span>}>
-                                <Menu.Item key="1">option 1</Menu.Item>
-                                <Menu.Item key="2">option 2</Menu.Item>
-                                <Menu.Item key="3">option 3</Menu.Item>
-                            </SubMenu>
-                            <SubMenu key="sub2" title={<span><Icon type="laptop"/>subnav 2</span>}>
-                                <Menu.Item key="4">option 4</Menu.Item>
-                                <Menu.Item key="5">option 5</Menu.Item>
-                                <Menu.Item key="6">option 6</Menu.Item>
-                            </SubMenu>
-                            <SubMenu key="sub3" title={<span><Icon type="notification"/>subnav 3</span>}>
-                                <Menu.Item key="7">option 7</Menu.Item>
-                                <Menu.Item key="8">option 8</Menu.Item>
-                                <Menu.Item key="9">option 9</Menu.Item>
-                            </SubMenu>
-                        </Menu>
+                    <Sider width={200} style={{background: "#fff"}}>
+                        {this.renderSideMenu()}
                     </Sider>
-                    <Layout style={{padding:"0 24px 0px"}}>
-                        <Breadcrumb style={{margin:"12px 0"}}>
+                    <Layout style={{padding: "0 24px 0px"}}>
+                        <Breadcrumb style={{margin: "12px 0"}}>
                             <Breadcrumb.Item>Home</Breadcrumb.Item>
                             <Breadcrumb.Item>List</Breadcrumb.Item>
                             <Breadcrumb.Item>App</Breadcrumb.Item>
                         </Breadcrumb>
-                        <Content style={{background:"#fff",padding:24,margin:0,minHeight:contentHeight}}>
+                        <Content style={{background: "#fff", padding: 24, margin: 0, minHeight: contentHeight}}>
                             <FrameContentRouter match={match}/>
                         </Content>
                     </Layout>
                 </Layout>
 
-                <Footer style={{textAlign:'center'}}>
+                <Footer style={{textAlign: 'center'}}>
                     snail@2019 Created by snail
                 </Footer>
             </Layout>
         )
     }
 }
+
+Frame.propTypes = {
+    menu: PropTypes.arrayOf(PropTypes.object),
+    loading: PropTypes.bool
+}
+
+/**
+ * 过滤菜单
+ * 没有父节点,并且位置设置为top的 才归属于顶部菜单
+ * 有父节点,并且位置设置为side的,才归属于侧边菜单
+ * @param menu
+ */
+function filterMenu(menu) {
+    let topMenu = [], sideMenu = [];
+    if(Array.isArray(menu) && menu.length>0){
+        menu.forEach(item => {
+            let {parentId, id, name, icon, pageUrl, isPage, position} = item;
+            if (!parentId && position == 'top') {
+                topMenu.push(item);
+            } else if (position == 'side' && !!parentId) {
+                sideMenu.push(item)
+            }
+        })
+    }
+    return {topMenu,sideMenu};
+}
+
+
+function mapStateToProps(state) {
+    let {menu, loading,selectedTopMenuId} = state.frame.frame;
+    let {topMenu, sideMenu} = filterMenu(menu);
+    return {
+        selectedTopMenuId,
+        topMenu,
+        sideMenu,
+        loading
+    }
+}
+
+export default connect(mapStateToProps)(Frame)

@@ -4,23 +4,17 @@
 'use strict'
 
 
-import React from 'react';
-import {Route, Redirect} from 'react-router-dom';
-
-import snailUtils from '../../publicResource/libs/snailUtils';
-import ServerCtrl from '../../controller/serverController'
-
-const STATUS_ING = "validating";
-const STATUS_PASS = "pass";
-const STATUS_NO_PASS = "noPass";
+import React, {PropTypes} from "react";
+import {Spin} from "antd";
+import {Redirect, Route} from "react-router-dom";
+import {connect} from "react-redux";
+import {loadCurrentUserInfo} from './loginRouteAction';
+import '../less/manager.less'
 
 
-export default class LoginRoute extends React.Component {
+class LoginRoute extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            status: STATUS_ING
-        }
     }
 
     componentDidMount() {
@@ -28,20 +22,8 @@ export default class LoginRoute extends React.Component {
     }
 
     loadLoginInfo() {
-        ServerCtrl.loadLoginInfo()
-            .catch(ex => {
-
-                this.setState({status: STATUS_NO_PASS});
-                snailUtils.writeLog(ex)
-            })
-            .then(data => {
-                snailUtils.writeLog(data.userName)
-                if (!!data.userName) {
-                    this.setState({status: STATUS_PASS});
-                } else {
-                    this.setState({status: STATUS_NO_PASS});
-                }
-            })
+        let {dispatch} = this.props;
+        dispatch(loadCurrentUserInfo());
 
     }
 
@@ -49,20 +31,47 @@ export default class LoginRoute extends React.Component {
     render() {
         let {location, component: Component, ...rest} = this.props;
 
-        let {status} = this.state;
+        let {loginRouteLoading,currentUser} = this.props;
 
-        if (status == STATUS_ING) {
-            return (<div>正在加载中</div>)
+
+        if (loginRouteLoading) {
+            return <div className="absoluteCenter"><Spin size="large" spinning={true}/></div>
+        }else{
+            return (
+                <Route {...rest} render={props => (
+                    !!currentUser.id ? (
+                        <Component {...props} />
+                    ) : (
+                        <Redirect to={{pathname: '/adminLogin', state: {from: location}}}/>
+                    )
+                )}/>
+            )
         }
 
-        return (
-            <Route {...rest} render={props => (
-                status == STATUS_PASS ? (
-                    <Component {...props} />
-                ) : (
-                    <Redirect to={{pathname: '/adminLogin', state: {from: location}}}/>
-                )
-            )}/>
-        )
+
     }
 }
+
+LoginRoute.propTypes = {
+    loginRouteLoading:PropTypes.bool.isRequired,
+    currentUser:PropTypes.object
+}
+LoginRoute.defaultProps = {
+    loginRouteLoading:true
+}
+
+function mapStateToProps(state){
+    let {loading,currentUser} = state.frame.loginInfo;
+    return {
+        loginRouteLoading:loading,
+        currentUser
+    }
+}
+
+export default connect(mapStateToProps)(LoginRoute);
+
+
+
+
+
+

@@ -27,7 +27,7 @@ const snailUtils = {
 
         configJson.body = JSON.stringify(param);
 
-        snailUtils.writeLog(`请求[url:${url},param:${JSON.stringify(param)}]`)
+        snailUtils.writeLog(`请求[url:${url},param:${!!param?JSON.stringify(param):"无参数"}]`)
 
         return fetch(url,configJson)
             .then(response => {

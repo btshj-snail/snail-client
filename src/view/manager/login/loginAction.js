@@ -2,10 +2,9 @@
  * Created by snail on 17-10-18.
  */
 
-import snailUtils from '../../../publicResource/libs/snailUtils';
-import ServerCtrl from '../../../controller/serverController';
+import ServerCtrl from "../../../controller/serverController";
 
-export const OPERATE_LOADING = 'operateLoading';
+export const OPERATE_LOADING_LOGIN = 'operateLoadingLogin';
 export const SET_LOGIN_STATUS = 'setLoginStatus';
 
 export const LoginStatus = {
@@ -16,7 +15,7 @@ export const LoginStatus = {
 
 export function loadingCtrl(loadingFlag){
     return {
-        type:OPERATE_LOADING,
+        type:OPERATE_LOADING_LOGIN,
         flag:loadingFlag
     }
 }
@@ -31,7 +30,6 @@ export function setLoginStatus(status){
 export function loginIn(info={userName:"",passwd:""}){
     return function (dispatch){
         dispatch(loadingCtrl(true));
-
         return ServerCtrl.loginIn(info)
             .then(data=>{
                 dispatch(loadingCtrl(false));

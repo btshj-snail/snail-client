@@ -3,52 +3,57 @@
  */
 
 'use strict'
+import ServerCtrl from '../../controller/serverController';
 
-export const GET_ALL_MENU_INFO = "getAllMenuInfo";
-export const GET_CHILDREN_AND_GRANDSON_MENU = "getChildrenAndGrandsonMenu";
-export const GET_CHILDREN_MENU = "getChildrenMenu";
-export const GET_NO_PARENT_MENU = "getNoParentMenu";
+
+export const OPERATE_LOADING_FRAME = "operateLoadingFrame";
+export const SET_MENU_LIST = "setMenuList";
+export const SELECT_TOP_MENU = "selectTopMenu";
+
+
+export function operateLoading(flag){
+    return {
+        type:OPERATE_LOADING_FRAME,
+        loading:flag,
+    }
+}
+
+export function setMenuList(list){
+    return {
+        type:SET_MENU_LIST,
+        list,
+    }
+}
+
+export function selectTopMenu(id){
+    return {
+        type:SELECT_TOP_MENU,
+        id
+    }
+}
+
+
+
 
 /**
  * 获取所有菜单信息
+ * 当前登录人员有权限查看的所有菜单
  * @returns {{type: string}}
  */
-export function getAllMenuInfo(){
-    return {
-        type:GET_ALL_MENU_INFO
+export function getMenusByCurrentUser(){
+    return function (dispatch){
+        dispatch(operateLoading(true));
+
+        return ServerCtrl.getMenusByCurrentUser()
+            .then(data=>{
+                dispatch(operateLoading(false));
+                dispatch(setMenuList(data));
+            })
+            .catch(ex=>{
+                dispatch(operateLoading(false));
+            })
+
     }
 }
 
-/**
- * 获取指定parentId下的所有菜单信息(包括子孙节点)
- * @param parentId
- * @returns {{type: string, parentId: *}}
- */
-export function getChildrenAndGrandsonMenu(parentId){
-    return {
-        type:GET_CHILDREN_AND_GRANDSON_MENU,
-        parentId
-    }
-}
 
-/**
- * 获取指定parentId下的菜单信息(只包括子节点)
- * @param parentId
- * @returns {{type: string, parentId: *}}
- */
-export function getChildrenMenu(parentId){
-    return {
-        type:GET_CHILDREN_MENU,
-        parentId
-    }
-}
-
-/**
- * 获取顶层节点
- * @returns {{type: string}}
- */
-export function getAllNoParentMenu(){
-    return {
-        type:GET_NO_PARENT_MENU
-    }
-}

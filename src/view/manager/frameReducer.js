@@ -4,32 +4,44 @@
 'use strict'
 
 import {combineReducers} from 'redux';
-import {GET_ALL_MENU_INFO,GET_CHILDREN_AND_GRANDSON_MENU,GET_CHILDREN_MENU,GET_NO_PARENT_MENU} from './frameAction';
+import {SET_MENU_LIST, OPERATE_LOADING_FRAME,SELECT_TOP_MENU} from './frameAction';
 
+function menuOperate(state = [], action) {
+    switch (action.type) {
+        case SET_MENU_LIST:
+            return action.list;
+            break;
+        default:
+            return state;
 
-function getNoParentMenu(state=[],action){
-    return state;
+    }
 }
 
-function getSideMenu(state=[],action){
-    return state;
+function loadingOperate(state = true, action) {
+    switch (action.type) {
+        case OPERATE_LOADING_FRAME:
+            return action.loading;
+            break;
+        default:
+            return state;
+    }
 }
 
-function menuOperate(state={topMenuList:[],sideMenuList:[]},action){
+function selectTopMenu(state="",action){
     switch (action.type){
-        case GET_NO_PARENT_MENU :
-            return getNoParentMenu(state.topMenuList,action);break;
-        case GET_CHILDREN_AND_GRANDSON_MENU :
-            return getSideMenu(state.sideMenuList,action);break;
+        case SELECT_TOP_MENU:
+            return action.id;
+            break;
         default:
             return state;
     }
 }
 
 const frameReducer = combineReducers({
-    menu:menuOperate
+    selectedTopMenuId:selectTopMenu,
+    menu: menuOperate,
+    loading: loadingOperate
 })
-
 
 
 export default frameReducer;
