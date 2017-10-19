@@ -10,6 +10,7 @@ import FrameContent from '../view/manager/frame/frameContent';
 import AclView from '../view/manager/system/aclView';
 import RoleMgView from '../view/manager/system/roleMgView';
 import UserMgView from '../view/manager/system/userMgView';
+import PageResMgView from '../view/manager/system/pageResMgView';
 
 const headerHeight = 64, headerBottomBorder = 1, footerHeight = 64;
 
@@ -41,6 +42,7 @@ export default class FrameContentRouter extends Component {
                 <Route path={`${match.url}/aclView`} component={AclView}/>
                 <Route path={`${match.url}/roleMgView`} component={RoleMgView}/>
                 <Route path={`${match.url}/userMgView`} component={UserMgView}/>
+                <Route path={`${match.url}/pageResMgView`} component={PageResMgView}/>
                 <Route exact path={match.url} component={FrameContent}/>
             </div>
         )

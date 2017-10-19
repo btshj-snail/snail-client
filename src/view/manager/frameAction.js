@@ -9,6 +9,14 @@ import ServerCtrl from '../../controller/serverController';
 export const OPERATE_LOADING_FRAME = "operateLoadingFrame";
 export const SET_MENU_LIST = "setMenuList";
 export const SELECT_TOP_MENU = "selectTopMenu";
+export const SET_BREADCRUMB = "setBreadcrumb";
+
+export function setBreadcrumb(ary){
+    return {
+        type:SET_BREADCRUMB,
+        breadcrumb:ary
+    }
+}
 
 
 export function operateLoading(flag){

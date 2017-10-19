@@ -5,11 +5,12 @@
 import React, {Component, PropTypes} from 'react';
 import {Layout, Menu, Breadcrumb, Icon} from 'antd';
 import {connect} from 'react-redux';
-import {getMenusByCurrentUser,selectTopMenu} from './frameAction'
+import {getMenusByCurrentUser, selectTopMenu,setBreadcrumb} from './frameAction'
 
 
 const {SubMenu} = Menu;
 const {Header, Content, Sider, Footer, Spin} = Layout;
+
 
 import snailUtils from '../../publicResource/libs/snailUtils';
 import ServerCtrl from '../../controller/serverController'
@@ -20,6 +21,7 @@ class Frame extends Component {
     constructor(props) {
         super(props);
         this._onClickTopMenu = this._onClickTopMenu.bind(this);
+        this._onClickSideMenu = this._onClickSideMenu.bind(this);
     }
 
     componentDidMount() {
@@ -30,6 +32,26 @@ class Frame extends Component {
         let {dispatch} = this.props;
         dispatch(getMenusByCurrentUser());
     }
+
+    changeBreadcrumb(menuName,menuPId){
+        let {topMenu,sideMenu,dispatch} = this.props;
+        let ary=[menuName],allMenus=[...topMenu,...sideMenu];
+        this._assembleBreadcrumb(allMenus,ary,menuPId);
+        dispatch(setBreadcrumb(ary.reverse()));
+    }
+
+    _assembleBreadcrumb(allMenus,ary,pId){
+        for(let i=0,l=allMenus.length;i<l;i++){
+            let {id,parentId,name} = allMenus[i];
+            if(id==pId){
+                ary.push(name);
+                if(!!parentId){
+                    this._assembleBreadcrumb(allMenus,ary,parentId);
+                }
+            }
+        }
+    }
+
 
     _assembleSideMenu(sideMenus, pId) {
         let _ary = [];
@@ -42,12 +64,12 @@ class Frame extends Component {
                 } else {
                     let subAry = this._assembleSideMenu(sideMenus, id);
                     if (subAry.length > 0) {
-                            _ary.push(
-                                <SubMenu key={id} title={<span>{!!icon ? <Icon type={icon}/> : null}{name}</span>}>
-                                    {subAry}
+                        _ary.push(
+                            <SubMenu key={id} title={<span>{!!icon ? <Icon type={icon}/> : null}{name}</span>}>
+                                {subAry}
 
-                                </SubMenu>
-                            )
+                            </SubMenu>
+                        )
                     }
                 }
             }
@@ -55,18 +77,30 @@ class Frame extends Component {
         return _ary;
     }
 
-    _onClickTopMenu(e){
+    _onClickTopMenu(e) {
         let {dispatch} = this.props;
         dispatch(selectTopMenu(e.key));
     }
 
-    renderTopMenu(){
+    _onClickSideMenu(e) {
+        let menuId = e.key;
+        let {sideMenu,dispatch,history} = this.props;
+        let menu = sideMenu.find(item => item.id == menuId);
+        if (menu && menu.pageUrl) {
+            history.push(menu.pageUrl);
+            this.changeBreadcrumb(menu.name,menu.parentId);
+        }
+    }
+
+
+
+    renderTopMenu() {
         let {topMenu} = this.props;
         let topMenuItems = [];
-        if(Array.isArray(topMenu) && topMenu.length>0){
-            topMenuItems = topMenu.map(item=>{
-                let {id,name,icon}= item;
-                return <Menu.Item key={id}>{!!icon?<Icon type={icon}/>:null}{name}</Menu.Item>
+        if (Array.isArray(topMenu) && topMenu.length > 0) {
+            topMenuItems = topMenu.map(item => {
+                let {id, name, icon} = item;
+                return <Menu.Item key={id}>{!!icon ? <Icon type={icon}/> : null}{name}</Menu.Item>
             })
         }
         return (
@@ -83,16 +117,17 @@ class Frame extends Component {
         )
     }
 
-    renderSideMenu(){
-        let {sideMenu,selectedTopMenuId} = this.props;
+    renderSideMenu() {
+        let {sideMenu, selectedTopMenuId} = this.props;
         let sideMenuItems = [];
-        if(Array.isArray(sideMenu) && sideMenu.length>0 && !!selectedTopMenuId){
-            sideMenuItems = this._assembleSideMenu(sideMenu,selectedTopMenuId);
+        if (Array.isArray(sideMenu) && sideMenu.length > 0 && !!selectedTopMenuId) {
+            sideMenuItems = this._assembleSideMenu(sideMenu, selectedTopMenuId);
         }
 
         return (
             <Menu
                 mode="inline"
+                onClick={this._onClickSideMenu}
                 style={{width: '100%', height: "100%"}}
             >
                 {sideMenuItems}
@@ -101,9 +136,25 @@ class Frame extends Component {
         )
     }
 
+    renderBreadcrumb(){
+        let {breadcrumb} = this.props,ary=[];
+        if(Array.isArray(breadcrumb) && breadcrumb.length>0){
+           ary = breadcrumb.map(item=>{
+                return <Breadcrumb.Item key={item}>{item}</Breadcrumb.Item>
+            })
+        }else{
+            return <Breadcrumb.Item>无</Breadcrumb.Item>
+        }
+        return (
+            <Breadcrumb style={{margin: "12px 0"}}>
+                {ary}
+            </Breadcrumb>
+        )
+    }
+
     render() {
         let {match} = this.props;
-        let contentHeight = document.body.clientHeight - 64 - 45 - 69;
+        // let contentHeight = document.body.clientHeight - 64 - 45 - 45-60;
         return (
             <Layout>
                 <Header className="header">
@@ -120,12 +171,8 @@ class Frame extends Component {
                         {this.renderSideMenu()}
                     </Sider>
                     <Layout style={{padding: "0 24px 0px"}}>
-                        <Breadcrumb style={{margin: "12px 0"}}>
-                            <Breadcrumb.Item>Home</Breadcrumb.Item>
-                            <Breadcrumb.Item>List</Breadcrumb.Item>
-                            <Breadcrumb.Item>App</Breadcrumb.Item>
-                        </Breadcrumb>
-                        <Content style={{background: "#fff", padding: 24, margin: 0, minHeight: contentHeight}}>
+                        {this.renderBreadcrumb()}
+                        <Content style={{background: "#fff", padding: 24, margin: 0,}}>
                             <FrameContentRouter match={match}/>
                         </Content>
                     </Layout>
@@ -152,7 +199,7 @@ Frame.propTypes = {
  */
 function filterMenu(menu) {
     let topMenu = [], sideMenu = [];
-    if(Array.isArray(menu) && menu.length>0){
+    if (Array.isArray(menu) && menu.length > 0) {
         menu.forEach(item => {
             let {parentId, id, name, icon, pageUrl, isPage, position} = item;
             if (!parentId && position == 'top') {
@@ -162,14 +209,15 @@ function filterMenu(menu) {
             }
         })
     }
-    return {topMenu,sideMenu};
+    return {topMenu, sideMenu};
 }
 
 
 function mapStateToProps(state) {
-    let {menu, loading,selectedTopMenuId} = state.frame.frame;
+    let {menu, loading, selectedTopMenuId,breadcrumb} = state.frame.frame;
     let {topMenu, sideMenu} = filterMenu(menu);
     return {
+        breadcrumb,
         selectedTopMenuId,
         topMenu,
         sideMenu,

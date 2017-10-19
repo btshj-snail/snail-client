@@ -4,7 +4,7 @@
 'use strict'
 
 import {combineReducers} from 'redux';
-import {SET_MENU_LIST, OPERATE_LOADING_FRAME,SELECT_TOP_MENU} from './frameAction';
+import {SET_MENU_LIST,SET_BREADCRUMB, OPERATE_LOADING_FRAME,SELECT_TOP_MENU} from './frameAction';
 
 function menuOperate(state = [], action) {
     switch (action.type) {
@@ -13,7 +13,6 @@ function menuOperate(state = [], action) {
             break;
         default:
             return state;
-
     }
 }
 
@@ -37,7 +36,18 @@ function selectTopMenu(state="",action){
     }
 }
 
+function setBreadcrumb(state=[],action){
+    switch (action.type){
+        case SET_BREADCRUMB:
+            return action.breadcrumb;
+            break;
+        default:
+            return state;
+    }
+}
+
 const frameReducer = combineReducers({
+    breadcrumb:setBreadcrumb,
     selectedTopMenuId:selectTopMenu,
     menu: menuOperate,
     loading: loadingOperate
