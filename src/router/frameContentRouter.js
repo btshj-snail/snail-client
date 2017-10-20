@@ -7,12 +7,11 @@ import React, {Component} from 'react'
 import {Route, Switch, HashRouter}  from 'react-router-dom';
 
 import FrameContent from '../view/manager/frame/frameContent';
-import AclView from '../view/manager/system/aclView';
-import RoleMgView from '../view/manager/system/roleMgView';
-import UserMgView from '../view/manager/system/userMgView';
-import PageResMgView from '../view/manager/system/pageResMgView';
+import AclView from '../view/manager/system/acl/aclView';
+import RoleMgView from '../view/manager/system/acl/roleMgView';
+import UserMgView from '../view/manager/system/acl/userMgView';
+import PageResMgView from '../view/manager/system/acl/pageResMgView';
 
-const headerHeight = 64, headerBottomBorder = 1, footerHeight = 64;
 
 export default class FrameContentRouter extends Component {
 
@@ -23,22 +22,13 @@ export default class FrameContentRouter extends Component {
 
 
     componentDidMount() {
-        let dom_frame_content = document.querySelector('#frame_content');
-
-        window.addEventListener('resize',()=>{
-            dom_frame_content.style.height = this.getFrameContentHeight()+"px";
-        },false)
     }
 
-    getFrameContentHeight() {
-        let screenHeight = document.documentElement.clientHeight;
-        return screenHeight - headerHeight - headerBottomBorder - footerHeight
-    }
 
     render() {
         let {match} = this.props;
         return (
-            <div id="frame_content" className="frame_content" style={{height: this.getFrameContentHeight()}}>
+            <div id="frame_content" className="frame_content" style={{height: "100%"}}>
                 <Route path={`${match.url}/aclView`} component={AclView}/>
                 <Route path={`${match.url}/roleMgView`} component={RoleMgView}/>
                 <Route path={`${match.url}/userMgView`} component={UserMgView}/>

@@ -3,17 +3,14 @@
  */
 'use strict'
 import React, {Component, PropTypes} from 'react';
-import {Layout, Menu, Breadcrumb, Icon} from 'antd';
+import {Layout, Menu, Breadcrumb, Icon,Spin} from 'antd';
 import {connect} from 'react-redux';
 import {getMenusByCurrentUser, selectTopMenu,setBreadcrumb} from './frameAction'
 
 
 const {SubMenu} = Menu;
-const {Header, Content, Sider, Footer, Spin} = Layout;
+const {Header, Content, Sider, Footer} = Layout;
 
-
-import snailUtils from '../../publicResource/libs/snailUtils';
-import ServerCtrl from '../../controller/serverController'
 
 import FrameContentRouter from '../../router/frameContentRouter';
 
@@ -110,7 +107,7 @@ class Frame extends Component {
                 onClick={this._onClickTopMenu}
                 // defaultSelectedKeys={["2"]}
                 // defaultOpenKeys={['sub1']}
-                style={{lineHeight: "64px", float: "right"}}
+                style={{lineHeight: "50px", float: "right"}}
             >
                 {topMenuItems}
             </Menu>
@@ -143,7 +140,7 @@ class Frame extends Component {
                 return <Breadcrumb.Item key={item}>{item}</Breadcrumb.Item>
             })
         }else{
-            return <Breadcrumb.Item>无</Breadcrumb.Item>
+            ary.push(<Breadcrumb.Item key="default1">首页</Breadcrumb.Item>) ;
         }
         return (
             <Breadcrumb style={{margin: "12px 0"}}>
@@ -154,7 +151,7 @@ class Frame extends Component {
 
     render() {
         let {match} = this.props;
-        // let contentHeight = document.body.clientHeight - 64 - 45 - 45-60;
+        let contentHeight = document.body.clientHeight - 50 -45- 45; //头部高度   面包高度  地步高度
         return (
             <Layout>
                 <Header className="header">
@@ -170,9 +167,9 @@ class Frame extends Component {
                     <Sider width={200} style={{background: "#fff"}}>
                         {this.renderSideMenu()}
                     </Sider>
-                    <Layout style={{padding: "0 24px 0px"}}>
+                    <Layout style={{padding: "0 12px 0px"}}>
                         {this.renderBreadcrumb()}
-                        <Content style={{background: "#fff", padding: 24, margin: 0,}}>
+                        <Content style={{background: "#fff", margin: 0,height:contentHeight}}>
                             <FrameContentRouter match={match}/>
                         </Content>
                     </Layout>
