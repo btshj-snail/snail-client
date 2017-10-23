@@ -5,7 +5,7 @@
 import React, {Component, PropTypes} from 'react';
 import {Layout, Menu, Breadcrumb, Icon,Spin} from 'antd';
 import {connect} from 'react-redux';
-import {getMenusByCurrentUser, selectTopMenu,setBreadcrumb} from './frameAction'
+import {getMenusByCurrentUser, selectTopMenu,setBreadcrumb,setContentHeight,getContentHeight} from './frameAction'
 
 
 const {SubMenu} = Menu;
@@ -22,6 +22,7 @@ class Frame extends Component {
     }
 
     componentDidMount() {
+        this._listenWindowSizeChange();
         this.loadMenu();
     }
 
@@ -89,7 +90,12 @@ class Frame extends Component {
         }
     }
 
-
+    _listenWindowSizeChange(){
+        let {dispatch} = this.props;
+        document.body.onresize = function(){
+            dispatch(setContentHeight(getContentHeight()));
+        }
+    }
 
     renderTopMenu() {
         let {topMenu} = this.props;
@@ -150,8 +156,8 @@ class Frame extends Component {
     }
 
     render() {
-        let {match} = this.props;
-        let contentHeight = document.body.clientHeight - 50 -45- 45; //头部高度   面包高度  地步高度
+        let {match,contentHeight} = this.props;
+        // let contentHeight = document.body.clientHeight - 50 -45- 45; //头部高度   面包高度  地步高度
         return (
             <Layout>
                 <Header className="header">
@@ -169,7 +175,7 @@ class Frame extends Component {
                     </Sider>
                     <Layout style={{padding: "0 12px 0px"}}>
                         {this.renderBreadcrumb()}
-                        <Content style={{background: "#fff", margin: 0,height:contentHeight}}>
+                        <Content style={{background: "#fff",overflowY:"hidden",margin: 0,height:contentHeight}}>
                             <FrameContentRouter match={match}/>
                         </Content>
                     </Layout>
@@ -211,9 +217,10 @@ function filterMenu(menu) {
 
 
 function mapStateToProps(state) {
-    let {menu, loading, selectedTopMenuId,breadcrumb} = state.frame.frame;
+    let {menu, loading, selectedTopMenuId,breadcrumb,contentHeight} = state.frame.frame;
     let {topMenu, sideMenu} = filterMenu(menu);
     return {
+        contentHeight,
         breadcrumb,
         selectedTopMenuId,
         topMenu,

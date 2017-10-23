@@ -10,6 +10,18 @@ export const OPERATE_LOADING_FRAME = "operateLoadingFrame";
 export const SET_MENU_LIST = "setMenuList";
 export const SELECT_TOP_MENU = "selectTopMenu";
 export const SET_BREADCRUMB = "setBreadcrumb";
+export const SET_CONTENT_HEIGHT = "setContentHeight";
+
+export function getContentHeight(){
+    return document.body.clientHeight - 50 -45- 45;
+}
+
+export function setContentHeight(height){
+    return {
+        type:SET_CONTENT_HEIGHT,
+        height
+    }
+}
 
 export function setBreadcrumb(ary){
     return {
