@@ -35,7 +35,7 @@ class LoginRoute extends React.Component {
 
 
         if (loginRouteLoading) {
-            return <div className="absoluteCenter"><Spin size="large" spinning={true}/></div>
+            return <div className="absoluteCenter"><Spin size="large" spinning={true} delay={500}/></div>
         }else{
             return (
                 <Route {...rest} render={props => (

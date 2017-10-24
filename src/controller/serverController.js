@@ -50,6 +50,34 @@ const ServerCtrl = {
             .catch(ex => {
                 throw ex;
             })
+    },
+
+    /**
+     * 获取界面资源
+     * @returns {*|Promise|Promise.<T>|Promise<U>}
+     */
+    getPageResList(){
+        return snailUtils.fetch(runConfig.serverAddress+'getAllPageResInfo')
+            .then(data=>{
+                return data;
+            })
+            .catch(ex=>{
+                throw ex;
+            })
+    },
+
+    /**
+     * 通过父节点获取界面资源信息
+     * @returns {*|Promise|Promise.<T>|Promise<U>}
+     */
+    getPageResListByParentId(parentId,paging){
+        return snailUtils.fetch(runConfig.serverAddress+'getPageResByParent',{param:{parentId,paging}})
+            .then(data=>{
+                return data;
+            })
+            .catch(ex=>{
+                throw ex;
+            })
     }
 }
 

@@ -156,7 +156,7 @@ class Frame extends Component {
     }
 
     render() {
-        let {match,contentHeight} = this.props;
+        let {match,contentHeight,loading} = this.props;
         // let contentHeight = document.body.clientHeight - 50 -45- 45; //头部高度   面包高度  地步高度
         return (
             <Layout>
@@ -175,9 +175,12 @@ class Frame extends Component {
                     </Sider>
                     <Layout style={{padding: "0 12px 0px"}}>
                         {this.renderBreadcrumb()}
-                        <Content style={{background: "#fff",overflowY:"hidden",margin: 0,height:contentHeight}}>
-                            <FrameContentRouter match={match}/>
-                        </Content>
+                        <Spin spinning={loading} delay={500}>
+                            <Content
+                                style={{background: "#fff", overflowY: "hidden", margin: 0, height: contentHeight}}>
+                                <FrameContentRouter match={match}/>
+                            </Content>
+                        </Spin>
                     </Layout>
                 </Layout>
 
@@ -217,7 +220,8 @@ function filterMenu(menu) {
 
 
 function mapStateToProps(state) {
-    let {menu, loading, selectedTopMenuId,breadcrumb,contentHeight} = state.frame.frame;
+    let {systemLoading} = state.frame.system;
+    let {menu, selectedTopMenuId,breadcrumb,contentHeight} = state.frame.frame;
     let {topMenu, sideMenu} = filterMenu(menu);
     return {
         contentHeight,
@@ -225,7 +229,7 @@ function mapStateToProps(state) {
         selectedTopMenuId,
         topMenu,
         sideMenu,
-        loading
+        loading:systemLoading
     }
 }
 
