@@ -3,12 +3,28 @@
  */
 
 'use strict'
-import ServerCtrl from '../../../../controller/serverController';
-import {setPageContentLoading} from '../../../../action/systemAction';
+import ServerCtrl from '../../../../../controller/serverController';
+import {setPageContentLoading} from '../../../../../action/systemAction';
 
+export const SET_MODAL_STATUS_AND_TITLE = 'setModalStatusAndTitle';
 export const SET_PAGE_RES_MG_TABLE_PAGING = 'setPageResMgTablePaging';
 export const SET_PAGE_RES_MG_TABLE_DATA = 'setPageResMgTableData';
 export const SET_PAGE_RES_MG_TREE_DATA = 'setPageResMgTreeData';
+
+
+/**
+ * 设置对话框状态以及标题
+ * @param data
+ * @returns {{type: string, data: *}}
+ */
+export function setModalStatusAndTitle(data){
+    return {
+        type:SET_MODAL_STATUS_AND_TITLE,
+        data
+    }
+}
+
+
 
 /**
  * 设置表格分页信息
@@ -101,13 +117,14 @@ export function getTableData(pId,paging){
 export function addPageRes(data){
     return function (dispatch){
         dispatch(setPageContentLoading(true));
-        return ServerCtrl.addPageRes(data)
+        return ServerCtrl.addPageResInfo(data)
             .catch(ex=>{
                 dispatch(setPageContentLoading(false));
                 throw ex;
             })
             .then(info=>{
                 dispatch(setPageContentLoading(false));
+                return info;
             })
 
     }

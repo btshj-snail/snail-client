@@ -4,18 +4,17 @@
 'use strict'
 
 import React, {Component} from 'react';
-import {Layout, Button, Tree, Icon, message,Modal,Form,Input,Select} from 'antd';
-import PaginationTable from '../../../../publicResource/components/paginationTable';
+import {Layout, Button, Tree, Icon, message} from 'antd';
+import PaginationTable from '../../../../../publicResource/components/paginationTable';
+
 import {connect} from 'react-redux';
 
-import {getTreeData, getTableData} from './pageResMgAction';
-
+import {getTreeData, getTableData,setModalStatusAndTitle,addPageRes} from './pageResMgAction';
+import PageResForm from './pageResMgForm';
 
 
 const {Header, Content, Sider, Footer} = Layout;
 const TreeNode = Tree.TreeNode;
-const FormItem = Form.Item;
-const Option = Select.Option;
 
 
 /**
@@ -102,15 +101,36 @@ class PageResMgView extends Component {
         return ary;
     }
 
-    onAdd(){
+    onAdd() {
+        let {dispatch} = this.props;
+        dispatch(setModalStatusAndTitle({visible:true,title:'新增'}));
+    }
+
+    onUpdate() {
+        let {dispatch} = this.props;
+        dispatch(setModalStatusAndTitle({visible:true,title:'修改'}));
+    }
+
+    onCloseModal(){
+        let {dispatch} = this.props;
+        dispatch(setModalStatusAndTitle({visible:false,title:''}));
+    }
+
+
+    onConfirmModal(data){
+        let {dispatch} = this.props;
+        dispatch(addPageRes(data))
+            .then(data=>{
+                dispatch(setModalStatusAndTitle({visible:false,title:''}));
+            })
+            .catch(ex=>{
+                message.error("新增失败"+ex.message);
+            })
 
     }
 
-    onUpdate(){
 
-    }
-
-    onDelete(){
+    onDelete() {
 
     }
 
@@ -140,18 +160,17 @@ class PageResMgView extends Component {
     }
 
 
-
     render() {
-        let {treeData, tableData, paging} = this.props;
+        let {treeData, tableData, paging,visible,title} = this.props;
         let {currentPage, total, size} = paging;
         return (
 
             <Layout className="pageLayout">
                 <Header className="header toolbar clear">
                     <div className="toolbarBtn_right">
-                        <Button className="buttonMarginHorizontal" icon="plus" onClick={this.onAdd}>Add</Button>
-                        <Button className="buttonMarginHorizontal" icon="edit" onClick={this.onUpdate}>Update</Button>
-                        <Button className="buttonMarginHorizontal" icon="delete" type="danger" onClick={this.onDelete}>Delete</Button>
+                        <Button className="buttonMarginHorizontal" icon="plus" onClick={this.onAdd.bind(this)}>Add</Button>
+                        <Button className="buttonMarginHorizontal" icon="edit" onClick={this.onUpdate.bind(this)}>Update</Button>
+                        <Button className="buttonMarginHorizontal" icon="delete" type="danger" onClick={this.onDelete.bind(this)}>Delete</Button>
                     </div>
                 </Header>
 
@@ -181,7 +200,13 @@ class PageResMgView extends Component {
 
                 </Layout>
 
-                <WrappedPageResForm/>
+                <
+                    PageResForm
+                    visible={visible}
+                    title={title}
+                    onCloseModal={this.onCloseModal.bind(this)}
+                    onConfirmModal = {this.onConfirmModal.bind(this)}
+                />
 
             </Layout>
 
@@ -196,10 +221,13 @@ PageResMgView.defaultProps = {
 }
 
 const mapStateToProps = (state) => {
-    let {tree, table} = state.frame.pageResMg;
+    let {tree, table,form} = state.frame.pageResMg;
     let {data: treeData} = tree;
+    let {visible,title} = form ;
     let {data: tableData, paging} = table;
     return {
+        visible,
+        title,
         treeData,
         tableData,
         paging
@@ -211,55 +239,5 @@ export default connect(mapStateToProps)(PageResMgView);
 
 
 
-class PageResForm extends React.Component{
-    constructor(props){
-        super(props);
-    }
 
-
-
-
-    render(){
-        let {getFieldDecorator} = this.props.form;
-        return (
-            <Modal
-                visible={true}
-                title="新增"
-                okText="确认"
-                onOk={()=>{alert(1)}}
-                onCancel={()=>{alert(2)}}
-            >
-
-                <Form layout="vertical">
-                    <FormItem label="名称">
-                        {getFieldDecorator('name', {rules: [{required: true, message: '请输入名称'}]})(<Input />)}
-                    </FormItem>
-                    <FormItem label="路径">
-                        {getFieldDecorator('pageUrl', {rules: [{required: true, message: '请输入路径'}]})(<Input />)}
-                    </FormItem>
-                    <FormItem label="图标">
-                        <Input />
-                    </FormItem>
-                    <FormItem label="是否为界面">
-                        {getFieldDecorator('isPage',{rules:[{required:true,message:'请选择'}]})(
-                            <Select placeholader="选择一个选项">
-                                <Option value={true}>是</Option>
-                                <Option value={false}>否</Option>
-                            </Select>
-                        )}
-                    </FormItem>
-                    <FormItem label="显示位置">
-                        {getFieldDecorator('position',{rules:[{required:true,message:'请选择'}]})(
-                            <Select placeholader="选择显示位置选项">
-                                <Option value={"top"}>顶部菜单栏</Option>
-                                <Option value={"side"}>侧边菜单栏</Option>
-                            </Select>
-                        )}
-                    </FormItem>
-                </Form>
-            </Modal>
-        )
-    }
-}
-const WrappedPageResForm = Form.create()(PageResForm);
 

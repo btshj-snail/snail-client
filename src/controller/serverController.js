@@ -78,6 +78,21 @@ const ServerCtrl = {
             .catch(ex=>{
                 throw ex;
             })
+    },
+
+    /**
+     * 新增界面资源信息
+     * @param json
+     * @returns {*|Promise|Promise.<T>|Promise<U>}
+     */
+    addPageResInfo(json){
+        return snailUtils.fetch(runConfig.serverAddress+'addPageRes',{param:json})
+            .then(data=>{
+                return data;
+            })
+            .catch(ex=>{
+
+            })
     }
 }
 

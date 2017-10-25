@@ -10,7 +10,7 @@ import FrameContent from '../view/manager/frame/frameContent';
 import AclView from '../view/manager/system/acl/aclView';
 import RoleMgView from '../view/manager/system/acl/roleMgView';
 import UserMgView from '../view/manager/system/acl/userMgView';
-import PageResMgView from '../view/manager/system/acl/pageResMgView';
+import PageResMgView from '../view/manager/system/acl/pageResMg/pageResMgView';
 
 
 export default class FrameContentRouter extends Component {
